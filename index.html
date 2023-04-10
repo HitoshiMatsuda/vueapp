@@ -46,8 +46,37 @@
     </div>
 
     <div id="vOn">
-      <p v-on:mousemove="changeMousePositions">テキストの上にマウスを載せてください</p>
+      <p v-on:mousemove="changeMousePositions">引数をとる場合は「$event」と表記する</p>
+      <!--  <p v-on:mousemove="changeMousePositions(number, $event)">テキストの上にマウスを載せてください</p>  -->
+      <p v-on:mousemove="changeMousePositions">テキストの上にマウスを載せてください<br><span v-on:mousemove.stop>ここではmousemoveは機能しない(.stopメソッド実装箇所)</span></p>
       <p>X:{{x}}、Y:{{y}}</p>
+      <!-- preventメソッド実装 -->
+      <a v-on:click.prevent href="https://google.com">Google_prevent</a><br>
+      <input type="text" v-on:keyup.enter="alert">
+    </div>
+
+    <div id="vOnCount">
+      <p>{{number}}</p>
+      <button v-on:click="countUp(5)">カウントアップ</button>
+    </div>
+
+    <div id="vModel">
+      <input type="text" v-model="text">
+      <p>{{text}}</p>
+    </div>
+
+    <div id="computedSample">
+      <h1>Computed_Method</h1>
+      <p>{{number}}</p>
+      <button v-on:click="countUp">+1</button>
+      <p>{{subnumber}}</p>
+      <button v-on:click="countUpSub">+1</button>
+      <p>computed不使用</p>
+      <p>{{ number > 3 ? "3より上":"3以下" }}</p>
+      <p>computed使用<br>computedは指定した変数に変化があった時のみ実行(今回の場合:number)</p>
+      <p>{{ lessthan }}</p>
+      <p>method使用<br>(methodの実行タイミングは画面が再描写されたとき、本メソッドに関係ない値の変化(無関係のボタン押下など)にも反応して実行される)</p>
+      <p>{{ lessthanmethod() }}</p>
     </div>
 
     <!-- <script type="module" src="/src/main.js"></script> -->
@@ -149,10 +178,81 @@
           changeMousePositions: function(event) {
             this.x = event.clientX;
             this.y = event.clientY;
+          },
+          alert:function(){
+            alert("Alert!!!!!");
           }
         }
       }
       Vue.createApp(vOn).mount("#vOn")
+    </script>
+    <!-- vOnCount -->
+    <script>
+      const vOnCount = {
+        data() {
+          return{
+            number:0
+          }
+        },
+        methods: {
+          countUp: function(inputNum) {
+            this.number += 1 * inputNum
+          }
+        }
+      }
+      Vue.createApp(vOnCount).mount("#vOnCount")
+    </script>
+    <!-- vModel -->
+    <script>
+        const vModel = {
+        data() {
+          return{
+            text:"Hello"
+          }
+        }
+      }
+      Vue.createApp(vModel).mount("#vModel")
+    </script>
+    <!-- computedSample -->
+    <!-- watchで非同期処理を実行 -->
+    <script>
+      const computedSample = {
+        data() {
+          return{
+            number:0,
+            subnumber:0
+          }
+        },
+        computed:{
+          lessthan:function(){
+            console.log("computed")
+            return this.number> 3 ? "3より上":"3以下"
+          }
+        },
+        watch:{
+          number: function(){
+            var x = this;
+            setTimeout(function(){
+              x.number = 0
+            }, 3000)
+          }
+        },
+        methods: {
+          lessthanmethod:function(){
+            console.log("method")
+            return this.number> 3 ? "3より上":"3以下"
+          },
+          countUp: function() {
+            // console.log("method_count")
+            this.number += 1
+          },
+          countUpSub: function() {
+            // console.log("method_count_sub")
+            this.subnumber += 1
+          }
+        }
+      }
+      Vue.createApp(computedSample).mount("#computedSample")
     </script>
   </body>
 </html>
