@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vite App</title>
+  </head>
+  <body>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <div id="app">
+      <p>{{ message }}</p>
+      <p>{{ number+100 }}</p>
+      <!-- 参考演算子 -->
+      <p>{{ flag ? "YES":"NO"}}</p>
+      <button v-on:click="reverseMessage">反転</button>
+    </div>
+
+    <div id="addition_app">
+      <p>{{ addition }}</p>
+      <button v-on:click="additionMethod">足し算(+5)</button>
+    </div>
+
+    <div id="subtraction_app">
+      <p>{{ subtraction }}</p>
+      <button v-on:click="subtractionMethod">引き算(-100)</button>
+    </div>
+
+    <div id="vOnce">
+      <!-- v-onceは初回描写のみ実行する。再描写には含まれない -->
+      <p v-once>{{ message }}</p>
+      <p>{{sayHi()}}</p>
+    </div>
+    
+    <div id="vBind">
+      <a v-bind:href="url">Google</a>
+      <p>省略版↓</p>
+      <a :href="url">Google</a>
+      <p>v-bind,Object方式</p>
+      <a v-bind="{href:urlTwitter,id:number}">Twitter_Object</a>
+      <p>href省略版</p>
+      <a :[attribute]="url">Google</a>
+      <p>TwitterObj</p>
+      <a v-bind="twitterObj">Twitter</a>
+    </div>
+
+    <div id="vOn">
+      <p v-on:mousemove="changeMousePositions">テキストの上にマウスを載せてください</p>
+      <p>X:{{x}}、Y:{{y}}</p>
+    </div>
+
+    <!-- <script type="module" src="/src/main.js"></script> -->
+    <!-- メッセージ反転 -->
+    <script>
+      const app = {
+        data() {
+          return {
+            message: "Hello Vue World!",
+            number: 100,
+            flag: true
+          }
+        },
+        methods: {
+          reverseMessage: function() {
+            this.message = this.message.split("").reverse().join("");
+          }
+        }
+      }
+      Vue.createApp(app).mount("#app")
+    </script>
+    <!-- 足し算 -->
+    <script>
+      const addition_app = {
+        data() {
+          return {
+            addition: 0
+          }
+        },
+        methods: {
+          additionMethod: function() {
+            this.addition = this.addition + 5
+          }
+        }
+      }
+      Vue.createApp(addition_app).mount("#addition_app")
+    </script>
+    <!-- 引き算 -->
+    <script>
+      const subtraction_app = {
+        data() {
+          return {
+            subtraction: 1000
+          }
+        },
+        methods: {
+          subtractionMethod: function() {
+            this.subtraction = this.subtraction - 100
+          }
+        }
+      }
+      Vue.createApp(subtraction_app).mount("#subtraction_app")
+    </script>
+    <!-- v-once -->
+    <script>
+      const vOnce = {
+        data() {
+          return {
+            message: "hogehoge"
+          }
+        },
+        methods: {
+          sayHi: function() {
+            this.message = "gehogeho"
+            return "aaaaaaa"
+          }
+        }
+      }
+      Vue.createApp(vOnce).mount("#vOnce")
+    </script>
+    <!-- v-bind -->
+    <script>
+      const vBind = {
+        data() {
+          return {
+            url: "https://google.com",
+            urlTwitter:"https://twitter.com",
+            number: 100,
+            attribute: "href",
+            twitterObj: {
+              href:"https://twitter.com",
+              id:100
+            }
+          }
+        }
+      }
+      Vue.createApp(vBind).mount("#vBind")
+    </script>
+    <!-- v-on -->
+    <script>
+      const vOn ={
+        data() {
+          return{
+            x:0,
+            y:0
+          }
+        },
+        methods: {
+          changeMousePositions: function(event) {
+            this.x = event.clientX;
+            this.y = event.clientY;
+          }
+        }
+      }
+      Vue.createApp(vOn).mount("#vOn")
+    </script>
+  </body>
+</html>
