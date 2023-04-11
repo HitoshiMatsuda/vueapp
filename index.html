@@ -116,7 +116,7 @@
       <p :style="[styleObj,baseStyleObj]">StyleObject</p>
     </div>
 
-    <!-- if分 -->
+    <!-- if文 -->
     <div id="ifelsetemp">
       <h2>判定ディレクトリ</h2>
       <p v-if="firstflag">OK</p>
@@ -124,7 +124,51 @@
       <p v-else>Not OK</p>
     </div>
 
+    <!-- for文 -->
+    <div id="forList">
+      <ul>
+        <li v-for="fruit in fruits">{{fruit}}</li>
+      </ul>
+      <ul>
+        <li v-for="(value, key) in object">{{key}} : {{value}}</li>
+      </ul>
+      <h1>templateにfor文を適用する</h1>
+      <ul>
+        <template v-for="fruit in fruits">
+          <li>{{ fruit }}</li>
+          <hr>
+        </template>
+      </ul>
+    </div>
+
+    <!-- for_key属性 -->
+    <div id="forkey">
+      <h3>Vue3.xではkey属性を"template"タグで指定する(Vue2ではdivタグ内で指定する)</h3>
+      <h3>v-forを使用する際は必ずkey属性を記載</h3>
+      <ul>
+        <template v-for="fruit in fruits" v-bind:key="fruit">
+          <p>{{ fruit }}</p>
+          <input type="text">
+        </template>
+      </ul>
+      <button v-on:click="remove">先頭を削除</button>
+    </div>
+
+    <!-- 外部からインスタンスへのアクセス -->
+    <div id="instance1">
+      <h1>instance1</h1>
+      <p>{{ message }}</p>
+    </div>
+    <div id="instance2">
+      <h1>instance2</h1>
+      <p>{{ message }}</p>
+      <button v-on:click="changeMessage">インスタンス1のメッセージを変更します。</button>
+    </div>
+
+
+
     <!-- <script type="module" src="/src/main.js"></script> -->
+    <!-- VUEインスタンスの生成↓ -->
     <!-- メッセージ反転 -->
     <script>
       const app = {
@@ -355,6 +399,69 @@
           }
         }
       Vue.createApp(ifelsetemp).mount("#ifelsetemp")
+    </script>
+
+    <!-- forList -->
+    <script>
+      const forList = {
+        data(){
+          return{
+            fruits:["りんご","なし","みかん","ばなな","いちご"],
+            object:{
+              firstName:"taro",
+              lastName:"tanaka",
+              age:18
+            }
+            }
+          }
+        }
+      Vue.createApp(forList).mount("#forList")
+    </script>
+
+    <!-- forkey -->
+    <script>
+      const forkey = {
+        data(){
+          return{
+            fruits:["りんご","なし","みかん","ばなな","いちご"],
+            }
+          },
+        methods:{
+          remove:function(){
+            this.fruits.shift()
+          }
+        }
+        }
+      Vue.createApp(forkey).mount("#forkey")
+    </script>
+
+    <!-- instance1 -->
+    <script>
+      const instance1 = {
+        data(){
+          return{
+            message: "インスタンス1"
+          }
+          }
+        }
+      var ins1 = Vue.createApp(instance1).mount("#instance1")
+    </script>
+
+    <!-- instance2 -->
+    <script>
+      const instance2 = {
+        data(){
+          return{
+            message: "インスタンス2"
+          }
+          },
+        methods:{
+          changeMessage:function(){
+            ins1.message = "インスタンス2から書き換えました。"
+          }
+        }
+        }
+      var ins2 = Vue.createApp(instance2).mount("#instance2")
     </script>
   </body>
 </html>
