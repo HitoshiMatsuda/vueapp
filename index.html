@@ -8,460 +8,55 @@
   </head>
   <body>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <style>
-      .titleText{
-        color: red;
-        padding-left: 8px;
-      }
-
-      .titleBack{
-        background-color: blue;
-      }
-
-      .backmaterial{
-        background-color: gray;
-      }
-
-      div{
-        background-color: #b0c4de;
-      }
-    </style>
-
-    <div id="app">
-      <p>{{ message }}</p>
-      <p>{{ number+100 }}</p>
-      <!-- 参考演算子 -->
-      <p>{{ flag ? "YES":"NO"}}</p>
-      <button v-on:click="reverseMessage">反転</button>
-    </div>
-
-    <div id="addition_app">
-      <p>{{ addition }}</p>
-      <button v-on:click="additionMethod">足し算(+5)</button>
-    </div>
-
-    <div id="subtraction_app">
-      <p>{{ subtraction }}</p>
-      <button v-on:click="subtractionMethod">引き算(-100)</button>
-    </div>
-
-    <div id="vOnce">
-      <!-- v-onceは初回描写のみ実行する。再描写には含まれない -->
-      <p v-once>{{ message }}</p>
-      <p>{{sayHi()}}</p>
-    </div>
     
-    <!-- v-bindはデータ紐づけ -->
-    <div id="vBind">
-      <a v-bind:href="url">Google</a>
-      <p>省略版↓</p>
-      <a :href="url">Google</a>
-      <p>v-bind,Object方式</p>
-      <a v-bind="{href:urlTwitter,id:number}">Twitter_Object</a>
-      <p>href省略版</p>
-      <a :[attribute]="url">Google</a>
-      <p>TwitterObj</p>
-      <a v-bind="twitterObj">Twitter</a>
+    <!-- ライフサイクルの検証 -->
+    <div id="appLife">
+      <h1>ライフサイクル</h1>
+      <p>{{message}}</p>
+      <button v-on:click="message = 'changed'">名前を変更</button>
+      <p>vue3ではdestroy→onUnmounted</p>
+      <button v-on:click="unmount">インスタンスを破壊</button>
     </div>
 
-    <!-- v-onは機能紐づけ -->
-    <div id="vOn">
-      <p v-on:mousemove="changeMousePositions">引数をとる場合は「$event」と表記する</p>
-      <!--  <p v-on:mousemove="changeMousePositions(number, $event)">テキストの上にマウスを載せてください</p>  -->
-      <p v-on:mousemove="changeMousePositions">テキストの上にマウスを載せてください<br><span v-on:mousemove.stop>ここではmousemoveは機能しない(.stopメソッド実装箇所)</span></p>
-      <p>X:{{x}}、Y:{{y}}</p>
-      <!-- preventメソッド実装 -->
-      <a v-on:click.prevent href="https://google.com">Google_prevent</a><br>
-      <input type="text" v-on:keyup.enter="alert">
-    </div>
-
-    <div id="vOnCount">
-      <p>{{number}}</p>
-      <button v-on:click="countUp(5)">カウントアップ</button>
-    </div>
-
-    <div id="vModel">
-      <input type="text" v-model="text">
-      <p>{{text}}</p>
-    </div>
-
-    <div id="computedSample">
-      <h1>Computed_Method</h1>
-      <p>{{number}}</p>
-      <button v-on:click="countUp">+1</button>
-      <p>{{subnumber}}</p>
-      <button v-on:click="countUpSub">+1</button>
-      <p>computed不使用</p>
-      <p>{{ number > 3 ? "3より上":"3以下" }}</p>
-      <p>computed使用<br>computedは指定した変数に変化があった時のみ実行(今回の場合:number)</p>
-      <p>{{ lessthan }}</p>
-      <p>method使用<br>(methodの実行タイミングは画面が再描写されたとき、本メソッドに関係ない値の変化(無関係のボタン押下など)にも反応して実行される)</p>
-      <p>{{ lessthanmethod() }}</p>
-    </div>
-
-    <!-- cssのためv-bind -->
-    <div id="csssample">
-      <p>動的切り替えなし</p>
-      <h1 v-bind:class="{ titleText:true, titleBack:false }">Title_fixed</h1>
-      <p>動的に切り替える</p>
-      <h1 v-bind:class="{ titleText:flag, titleBack:flag }">Title_dynamic</h1>
-      <button v-on:click="flag = !flag">CSS切り替えボタン</button>
-      <p>動的に切り替える_Object表記</p>
-      <h1 v-bind:class="cssObj">Title_dynamic_Object</h1>
-      <button v-on:click="objFlag = !objFlag">CSS切り替えボタン</button>
-    </div>
-
-    <!-- 配列でCSSObjectを適用する -->
-    <div id="styleObj">
-      <p :style="[styleObj,baseStyleObj]">StyleObject</p>
-    </div>
-
-    <!-- if文 -->
-    <div id="ifelsetemp">
-      <h2>判定ディレクトリ</h2>
-      <p v-if="firstflag">OK</p>
-      <p v-else-if="secondflag">maybe OK</p>
-      <p v-else>Not OK</p>
-    </div>
-
-    <!-- for文 -->
-    <div id="forList">
-      <ul>
-        <li v-for="fruit in fruits">{{fruit}}</li>
-      </ul>
-      <ul>
-        <li v-for="(value, key) in object">{{key}} : {{value}}</li>
-      </ul>
-      <h1>templateにfor文を適用する</h1>
-      <ul>
-        <template v-for="fruit in fruits">
-          <li>{{ fruit }}</li>
-          <hr>
-        </template>
-      </ul>
-    </div>
-
-    <!-- for_key属性 -->
-    <div id="forkey">
-      <h3>Vue3.xではkey属性を"template"タグで指定する(Vue2ではdivタグ内で指定する)</h3>
-      <h3>v-forを使用する際は必ずkey属性を記載</h3>
-      <ul>
-        <template v-for="fruit in fruits" v-bind:key="fruit">
-          <p>{{ fruit }}</p>
-          <input type="text">
-        </template>
-      </ul>
-      <button v-on:click="remove">先頭を削除</button>
-    </div>
-
-    <!-- 外部からインスタンスへのアクセス -->
-    <div id="instance1">
-      <h1>instance1</h1>
-      <p>{{ message }}</p>
-    </div>
-    <div id="instance2">
-      <h1>instance2</h1>
-      <p>{{ message }}</p>
-      <button v-on:click="changeMessage">インスタンス1のメッセージを変更します。</button>
-    </div>
-
-
-
-    <!-- <script type="module" src="/src/main.js"></script> -->
-    <!-- VUEインスタンスの生成↓ -->
-    <!-- メッセージ反転 -->
+    <!-- appLife -->
     <script>
-      const app = {
-        data() {
-          return {
-            message: "Hello Vue World!",
-            number: 100,
-            flag: true
-          }
-        },
-        methods: {
-          reverseMessage: function() {
-            this.message = this.message.split("").reverse().join("");
-          }
-        }
-      }
-      Vue.createApp(app).mount("#app")
-    </script>
-
-    <!-- 足し算 -->
-    <script>
-      const addition_app = {
-        data() {
-          return {
-            addition: 0
-          }
-        },
-        methods: {
-          additionMethod: function() {
-            this.addition = this.addition + 5
-          }
-        }
-      }
-      Vue.createApp(addition_app).mount("#addition_app")
-    </script>
-
-    <!-- 引き算 -->
-    <script>
-      const subtraction_app = {
-        data() {
-          return {
-            subtraction: 1000
-          }
-        },
-        methods: {
-          subtractionMethod: function() {
-            this.subtraction = this.subtraction - 100
-          }
-        }
-      }
-      Vue.createApp(subtraction_app).mount("#subtraction_app")
-    </script>
-
-    <!-- v-once -->
-    <script>
-      const vOnce = {
-        data() {
-          return {
-            message: "hogehoge"
-          }
-        },
-        methods: {
-          sayHi: function() {
-            this.message = "gehogeho"
-            return "aaaaaaa"
-          }
-        }
-      }
-      Vue.createApp(vOnce).mount("#vOnce")
-    </script>
-
-    <!-- v-bind -->
-    <script>
-      const vBind = {
-        data() {
-          return {
-            url: "https://google.com",
-            urlTwitter:"https://twitter.com",
-            number: 100,
-            attribute: "href",
-            twitterObj: {
-              href:"https://twitter.com",
-              id:100
+        const appLife = {
+          data(){
+            return{
+              message: "ライフサイクル検証"
             }
-          }
-        }
-      }
-      Vue.createApp(vBind).mount("#vBind")
-    </script>
-
-    <!-- v-on -->
-    <script>
-      const vOn ={
-        data() {
-          return{
-            x:0,
-            y:0
-          }
-        },
-        methods: {
-          changeMousePositions: function(event) {
-            this.x = event.clientX;
-            this.y = event.clientY;
-          },
-          alert:function(){
-            alert("Alert!!!!!");
-          }
-        }
-      }
-      Vue.createApp(vOn).mount("#vOn")
-    </script>
-
-    <!-- vOnCount -->
-    <script>
-      const vOnCount = {
-        data() {
-          return{
-            number:0
-          }
-        },
-        methods: {
-          countUp: function(inputNum) {
-            this.number += 1 * inputNum
-          }
-        }
-      }
-      Vue.createApp(vOnCount).mount("#vOnCount")
-    </script>
-
-    <!-- vModel -->
-    <script>
-        const vModel = {
-        data() {
-          return{
-            text:"Hello"
-          }
-        }
-      }
-      Vue.createApp(vModel).mount("#vModel")
-    </script>
-
-    <!-- computedSample -->
-    <!-- watchで非同期処理を実行 -->
-    <script>
-      const computedSample = {
-        data() {
-          return{
-            number:0,
-            subnumber:0
-          }
-        },
-        computed:{
-          lessthan:function(){
-            console.log("computed")
-            return this.number> 3 ? "3より上":"3以下"
-          }
-        },
-        watch:{
-          number: function(){
-            var x = this;
-            setTimeout(function(){
-              x.number = 0
-            }, 3000)
-          }
-        },
-        methods: {
-          lessthanmethod:function(){
-            console.log("method")
-            return this.number> 3 ? "3より上":"3以下"
-          },
-          countUp: function() {
-            // console.log("method_count")
-            this.number += 1
-          },
-          countUpSub: function() {
-            // console.log("method_count_sub")
-            this.subnumber += 1
-          }
-        }
-      }
-      Vue.createApp(computedSample).mount("#computedSample")
-    </script>
-
-    <!-- csssample -->
-    <script>
-      const csssample = {
-        data(){
-          return{
-            flag:true,
-            objFlag:true
-          }
-        },
-        computed:{
-          cssObj:function(){
-            return { titleText:this.objFlag, titleBack:this.objFlag }
-          }
-        }
-      }
-      Vue.createApp(csssample).mount("#csssample")
-    </script>
-
-    <!-- styleObj -->
-    <script>
-      const styleObj = {
-        data(){
-          return{
-            styleObj:{
-              color:"black",
-              'background-color':"green"
             },
-            baseStyleObj:{
-              fontSize:"60px"
-            }
-          }
-        }
-      }
-      Vue.createApp(styleObj).mount("#styleObj")
-    </script>
-
-    <!-- ifelsetemp -->
-    <script>
-      const ifelsetemp = {
-        data(){
-          return{
-            firstflag:false,
-            secondflag:true
-            }
-          }
-        }
-      Vue.createApp(ifelsetemp).mount("#ifelsetemp")
-    </script>
-
-    <!-- forList -->
-    <script>
-      const forList = {
-        data(){
-          return{
-            fruits:["りんご","なし","みかん","ばなな","いちご"],
-            object:{
-              firstName:"taro",
-              lastName:"tanaka",
-              age:18
-            }
-            }
-          }
-        }
-      Vue.createApp(forList).mount("#forList")
-    </script>
-
-    <!-- forkey -->
-    <script>
-      const forkey = {
-        data(){
-          return{
-            fruits:["りんご","なし","みかん","ばなな","いちご"],
-            }
+          beforeCreate:function(){
+            console.log("before create");
           },
-        methods:{
-          remove:function(){
-            this.fruits.shift()
-          }
-        }
-        }
-      Vue.createApp(forkey).mount("#forkey")
-    </script>
-
-    <!-- instance1 -->
-    <script>
-      const instance1 = {
-        data(){
-          return{
-            message: "インスタンス1"
-          }
-          }
-        }
-      var ins1 = Vue.createApp(instance1).mount("#instance1")
-    </script>
-
-    <!-- instance2 -->
-    <script>
-      const instance2 = {
-        data(){
-          return{
-            message: "インスタンス2"
-          }
+          created:function(){
+            console.log("created");
           },
-        methods:{
-          changeMessage:function(){
-            ins1.message = "インスタンス2から書き換えました。"
+          beforeMount:function(){
+            console.log("before mount");
+          },
+          mounted:function(){
+            console.log("mounted");
+          },
+          beforeUpdate:function(){
+            console.log("before update");
+          },
+          updated:function(){
+            console.log("updated");
+          },
+          beforeUnmount:function(){
+            console.log("beforeUnmount");
+          },
+          unmount:function(){
+            console.log("unmount");
+          },
+          methods:{
+            unmount: function(){
+              this.$.appContext.app.unmount();
+            }
           }
         }
-        }
-      var ins2 = Vue.createApp(instance2).mount("#instance2")
+      var ins2 = Vue.createApp(appLife).mount("#appLife")
     </script>
   </body>
 </html>

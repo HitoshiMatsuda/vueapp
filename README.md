@@ -27,3 +27,5 @@ npm run dev
 ```sh
 npm run build
 ```
+## VUE CLI Version
+* @vue/cli 5.0.8
